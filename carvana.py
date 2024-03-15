@@ -31,22 +31,29 @@ for i in page_list:
 
 
 
+sample_list = [concatenated_list[0], concatenated_list[1]]
 data_to_append = []
 
 for url in concatenated_list:
     driver.get(url)
-    time.sleep(40)
+    time.sleep(25)
 
     element = driver.find_elements(By.ID, '__next')
     words = element[0].text.split('\n')
-    car = words[12]
-    car_name = ' '.join(car.split()[1:])
-    year = car.split(" ")[0]
-    miles = words[21]
-    price = words[14]
+    car = ""
+    car_name = ""
+    year = ""
     fuel_type = ""
     auto_man = ""
     for i in range(0,len(words)):
+        if("miles" in words[i]):
+            miles = words[i]
+        if(words[i].startswith("$")):
+            price = words[i]
+        if(words[i].startswith("20")):
+            car = words[i]
+            car_name = ' '.join(car.split()[1:])
+            year = car.split(" ")[0]
         if(words[i]=="Fuel"):
             fuel_type = words[i+1]
         if(words[i]=="Transmission"):

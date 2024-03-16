@@ -41,6 +41,7 @@ for i in page_list:
 
 sample_list = [concatenated_list[0], concatenated_list[1]]
 data_to_append = []
+n = 1
 
 for url in sample_list:
     driver.get(url)
@@ -55,6 +56,7 @@ for url in sample_list:
     year = ""
     price = ""
     miles = ""
+    car_category = ""
     fuel_type = ""
     auto_man = ""
     VIN = ""
@@ -71,24 +73,28 @@ for url in sample_list:
                     company_name = company
                     model = car_name.replace(company_name, '')
             year = car.split(" ")[0]
+            car_category = words[i+1]
+        if(words[i].startswith("VIN")):
+            VIN = words[i]
+
+        # To do : Improve logic for Fuel and Auto/Manual
         if(words[i]=="Fuel"):
             fuel_type = words[i+1]
         if(words[i]=="Transmission"):
             auto_man = words[i+1]
         if(("Auto" in words[i]) or ("Manual" in words[i])):
             auto_man = words[i]
-        if(words[i].startswith("VIN")):
-            VIN = words[i]
-    data_to_append.append((url, company_name, model, price, (VIN.split(" ")[1]), year, miles, fuel_type, 
-                            (auto_man.split(',')[0]), location))
+
+
+    data_to_append.append((n, url.replace("#vehicle-details", ''), company_name, model, price, (VIN.split(" ")[1]),  
+                            year, miles, car_category, fuel_type, (auto_man.split(',')[0]), location))
+    n = n+1
 driver.quit()
 
 
 
 
 
-
-
-df = pd.DataFrame(data_to_append, columns=['Link', 'Company', 'Model', 'Price', 'VIN', 'Year', 'Miles', 'Fuel',
-                                            'Auto/Manual', 'Location'])
+df = pd.DataFrame(data_to_append, columns=['Sr. no.', 'Link', 'Company', 'Model', 'Price', 'VIN', 'Year', 'Miles', 
+                                            'Category', 'Fuel', 'Auto/Manual', 'Location'])
 display(df)

@@ -63,8 +63,9 @@ for url in sample_list:
     for i in range(0,len(words)):
         if(re.match(r'\d{1,3}(?:,\d{3})*(?:\.\d+)? miles', words[i])):
             miles = words[i]
-        if(re.match(r'\$\d{1,3}(?:,\d{3}){0,2}', words[i])):
-            price = words[i]
+        if not price:
+            if(re.match(r'\$\d{1,3}(?:,\d{3}){0,2}', words[i])):
+                price = words[i]
         if(re.match(r'20\d{2}\s*', words[i])):
             car = words[i]
             car_name = ' '.join(car.split()[1:])

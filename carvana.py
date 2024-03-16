@@ -8,6 +8,7 @@ driver = webdriver.Chrome()
 driver.get("https://www.carvana.com/cars")
 time.sleep(20)
 
+location = driver.find_element(By.XPATH, '//*[@id="search-tools"]/div[1]/div/span').text
 element = driver.find_elements(By.XPATH, "//a[@href]")
 
 links = []
@@ -31,10 +32,12 @@ for i in page_list:
 
 
 
+
+
 sample_list = [concatenated_list[0], concatenated_list[1]]
 data_to_append = []
 
-for url in concatenated_list:
+for url in sample_list:
     driver.get(url)
     time.sleep(25)
 
@@ -43,14 +46,17 @@ for url in concatenated_list:
     car = ""
     car_name = ""
     year = ""
+    price = ""
+    miles = ""
     fuel_type = ""
     auto_man = ""
+    VIN = ""
     for i in range(0,len(words)):
-        if("miles" in words[i]):
+        if(re.match(r'\d+ miles', words[i])):
             miles = words[i]
-        if(words[i].startswith("$")):
+        if(re.fullmatch(r'$\d*', words[i])):
             price = words[i]
-        if(words[i].startswith("20")):
+        if(re.match(r'20\d{2}\s*', words[i])):
             car = words[i]
             car_name = ' '.join(car.split()[1:])
             year = car.split(" ")[0]
@@ -62,7 +68,7 @@ for url in concatenated_list:
             auto_man = words[i]
         if(words[i].startswith("VIN")):
             VIN = words[i]
-    data_to_append.append((url,car_name,price,(VIN.split(" ")[1]),year,miles,fuel_type,(auto_man.split(',')[0])))
+    data_to_append.append((url,car_name,price,(VIN.split(" ")[1]),year,miles,fuel_type,(auto_man.split(',')[0]),location))
 driver.quit()
 
 
@@ -70,5 +76,6 @@ driver.quit()
 
 
 
-df = pd.DataFrame(data_to_append, columns=['Link', 'Car','Price','VIN','Year','Miles','Fuel','Auto/Manual'])
+
+df = pd.DataFrame(data_to_append, columns=['Link', 'Car','Price','VIN','Year','Miles','Fuel','Auto/Manual','Location'])
 display(df)
